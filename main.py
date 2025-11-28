@@ -3,15 +3,18 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
+import logging
+
+app.logger.setLevel(logging.INFO)
+
 @app.route('/webhook', methods=['POST'])
 def receive_webhook():
-    print("\n===== Incoming Webhook =====")
     if request.is_json:
         data = request.get_json()
-        print("Received JSON data:", data)
+        app.logger.info(f"Received JSON data: {data}")
         return jsonify({"status": "success", "message": "Webhook received"}), 200
     else:
-        print("Received non-JSON data:", request.data)
+        app.logger.warning(f"Received non-JSON data: {request.data}")
         return jsonify({"status": "error", "message": "Expected JSON payload"}), 400
 
 if __name__ == '__main__':
